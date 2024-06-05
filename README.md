@@ -4,6 +4,9 @@ A web interface bot to check and improve grammar and phrasing of your input, sim
 
 Use any backend LLM service of your choice, even locally hosted ones (check "Installation" for more)!
 
+![image](https://github.com/Krisseck/Phrasing-Bot/assets/471887/3edbc5f4-53cf-4346-af80-655e1836acf4)
+
+
 # Requirements
 
 - node version 20.* (check `.nvmrc`)

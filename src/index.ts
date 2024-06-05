@@ -68,7 +68,7 @@ app.post('/api/start-generation', async function (req: Request, res: Response) {
       chunk = sentences.slice(i, i + sentenceChunkSize);
 
       // Get LLM output
-      let llmOutput = await getLlmOutput(chunk.join(" "), req.body.model, req.body.type);
+      let llmOutput = await getLlmOutput(chunk.join(" "), req.body.model, req.body.type, req.body.style);
 
       // Append to output
       chunkOutput.push(llmOutput.trim());

@@ -12,11 +12,12 @@ export async function getGeneration(generationId: number): Promise<Generation | 
   return undefined
 }
 
-export async function startGeneration(prompt, model, type): Promise<number> {
+export async function startGeneration(prompt, model, type, style): Promise<number> {
   let response = await axios.post('/api/start-generation', {
     prompt,
     model,
-    type
+    type,
+    style
   })
 
   if (response.data?.generationId) {

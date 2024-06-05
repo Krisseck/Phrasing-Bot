@@ -28,6 +28,18 @@
             </div>
           </div>
         </div>
+        <div class="field mb-5" v-if="chosenType === 'GRAMMAR_PHRASING'">
+          <label class="label">Style</label>
+          <div class="control">
+            <div class="select">
+              <select v-model="chosenStyle">
+                <option v-for="key in Object.keys(styles)" v-bind:key="key" :value="key">
+                  {{ styles[key].name }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="columns">
@@ -93,6 +105,7 @@ import type { ExpandedModel } from '../../../common/types/llm'
 import type { Generation } from '../../../common/types/generation'
 
 import { promptTypes } from '../../../common/prompt-types'
+import { styles } from '../../../common/styles'
 import { getGeneration, startGeneration } from '@/backend'
 
 const inputTextarea = ref(
@@ -105,13 +118,14 @@ const modelsLoaded = ref(false)
 const diffOutput = ref([] as DiffItem[])
 const chosenModel = ref('')
 const chosenType = ref('GRAMMAR_PHRASING')
+const chosenStyle = ref('NATURAL')
 let generationId = 0
 
 const submitPrompt = async () => {
   generationIsLoading.value = true
   outputTextarea.value = ''
   diffOutput.value = []
-  generationId = await startGeneration(inputTextarea.value, chosenModel.value, chosenType.value)
+  generationId = await startGeneration(inputTextarea.value, chosenModel.value, chosenType.value, chosenStyle.value)
   // Wait a moment before polling for the first time
   await new Promise((r) => setTimeout(r, 1000))
   await pollResults()

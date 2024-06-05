@@ -15,6 +15,7 @@ const requestType = process.env.REQUEST_TYPE?.toUpperCase() || 'OPENAI';
 
 import {ExpandedModel} from "../common/types/llm";
 import {promptTypes} from "../common/prompt-types";
+import {styles} from "../common/styles";
 
 switch(requestType) {
     case 'CUSTOM':
@@ -45,7 +46,15 @@ const openai = new OpenAI({
     baseURL: apiBaseUrl
 });
 
-export async function getLlmOutput(input: string, model: string, promptType: string) {
+export async function getLlmOutput(input: string, model: string, promptType: string, style: string | undefined) {
+
+    let promptContent = promptTypes[promptType].content;
+
+    if(style) {
+        promptContent = promptContent.replace("{STYLE}", styles[style].content);
+    }
+
+    promptContent = promptContent + "\n\nParagraph: " + input;
 
     const params: OpenAI.Chat.ChatCompletionCreateParams = {
         messages: [
@@ -55,7 +64,7 @@ export async function getLlmOutput(input: string, model: string, promptType: str
             },
             {
                 role: 'user',
-                content: promptTypes[promptType].content + "\n\nParagraph: " + input
+                content: promptContent
             }
         ],
         model,

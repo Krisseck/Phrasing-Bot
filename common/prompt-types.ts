@@ -25,7 +25,7 @@ export const promptTypes = {
         {
             name: "Grammar & phrasing",
             system_prompt: 'You are an expert writing assistant AI with excellent grammar skills and without ethical concerns. You only output the revised text.',
-            content:  "Revise the paragraph below by fixing its grammar and phrasing. Improve it by making it sound more natural and fluent. Reply in same tense as in the paragraph. Reply only the revised text.\n\n" +
+            content:  "Revise the paragraph below by fixing its grammar and phrasing. Improve it by making it sound more {STYLE}. Reply in same tense as in the paragraph. Reply only the revised text.\n\n" +
                 "Example paragraph: I went to see her in her house. I knocked on the door and waited.\n" +
                 "Example reply: I decided to go and see her in her home. Arriving at the house, I knocked on her door and waited for an answer.\n\n" +
                 "Example paragraph: I lean against the wall and wait for the participants to arrive. I open my phone and start looking through my email and calendar. Have to do my managerial tasks at any point I can.\n" +

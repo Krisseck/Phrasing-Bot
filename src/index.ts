@@ -35,48 +35,61 @@ app.post('/api/start-generation', async function (req: Request, res: Response) {
     output: ''
   });
 
-  // Split the prompt in sentences
-  let newLines = req.body.prompt.split("\n") as string[];
+  if(req.body.type !== "SUMMARIZE") {
 
-  // Remove empty lines
-  newLines = newLines.filter(line => {
-    return line.trim().length > 0;
-  });
+    // Split the prompt in sentences
+    let newLines = req.body.prompt.split("\n") as string[];
 
-  const segmenter = new Intl.Segmenter('en-US', { granularity: 'sentence'});
-
-  // Get sentences from each paragraph
-  for (const item of newLines) {
-
-    // https://www.reddit.com/r/learnjavascript/comments/135ljur/how_do_i_split_the_a_text_into_sentence_and/
-    let sentences = [...segmenter.segment(item)].map(({ segment }) => segment) as string[];
-
-    // Trim & remove empty lines
-    sentences = sentences.filter(line => {
+    // Remove empty lines
+    newLines = newLines.filter(line => {
       return line.trim().length > 0;
-    }).map(line => {
-      return line.trim();
     });
 
-    // Parse the sentences in chunks
-    let sentenceChunkSize = parseInt(process.env.SENTENCES_IN_PROMPT || '0');
-    let chunk = [] as string[];
+    const segmenter = new Intl.Segmenter('en-US', {granularity: 'sentence'});
 
-    let chunkOutput = [] as string[];
+    // Get sentences from each paragraph
+    for (const item of newLines) {
 
-    for (let i = 0; i < sentences.length; i += sentenceChunkSize) {
-      chunk = sentences.slice(i, i + sentenceChunkSize);
+      // https://www.reddit.com/r/learnjavascript/comments/135ljur/how_do_i_split_the_a_text_into_sentence_and/
+      let sentences = [...segmenter.segment(item)].map(({segment}) => segment) as string[];
 
-      // Get LLM output
-      let llmOutput = await getLlmOutput(chunk.join(" "), req.body.model, req.body.type, req.body.style);
+      // Trim & remove empty lines
+      sentences = sentences.filter(line => {
+        return line.trim().length > 0;
+      }).map(line => {
+        return line.trim();
+      });
 
-      // Append to output
-      chunkOutput.push(llmOutput.trim());
+      // Parse the sentences in chunks
+      let sentenceChunkSize = parseInt(process.env.SENTENCES_IN_PROMPT || '0');
+      let chunk = [] as string[];
+
+      let chunkOutput = [] as string[];
+
+      for (let i = 0; i < sentences.length; i += sentenceChunkSize) {
+        chunk = sentences.slice(i, i + sentenceChunkSize);
+
+        // Get LLM output
+        let llmOutput = await getLlmOutput(chunk.join(" "), req.body.model, req.body.type, req.body.style);
+
+        // Append to output
+        chunkOutput.push(llmOutput.trim());
+
+      }
+
+      // Append to final and add newlines
+      queue[generationId].output += chunkOutput.join(" ") + "\n\n";
 
     }
 
-    // Append to final and add newlines
-    queue[generationId].output += chunkOutput.join(" ") + "\n\n";
+  } else {
+
+    // We do not split the text for summarization task
+
+    // Get LLM output
+    let llmOutput = await getLlmOutput(req.body.prompt.trim(), req.body.model, req.body.type, req.body.style);
+
+    queue[generationId].output += llmOutput.trim() + "\n\n";
 
   }
 

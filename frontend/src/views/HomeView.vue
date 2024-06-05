@@ -1,34 +1,15 @@
 <template>
   <main class="container">
     <div class="columns">
-      <div class="column is-one-third">
-        <div class="field mb-5">
-          <label class="label">Model</label>
-          <div class="control">
-            <div class="select">
-              <select v-model="chosenModel">
-                <option v-for="model in llmStore.models" v-bind:key="model.id" :value="model.id">
-                  {{ model.id }}
-                </option>
-              </select>
-            </div>
-          </div>
+      <div class="column is-two-thirds">
+        <div class="tabs is-toggle is-medium">
+          <ul>
+            <li v-for="key in Object.keys(promptTypes)" v-bind:key="key" :value="key" :class="{ 'is-active': key === chosenType }">
+              <a @click="chosenType = key">{{ promptTypes[key].name }}</a>
+            </li>
+          </ul>
         </div>
-      </div>
-      <div class="column">
-        <div class="field mb-5">
-          <label class="label">Type</label>
-          <div class="control">
-            <div class="select">
-              <select v-model="chosenType">
-                <option v-for="key in Object.keys(promptTypes)" v-bind:key="key" :value="key">
-                  {{ promptTypes[key].name }}
-                </option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <div class="field mb-5" v-if="chosenType === 'GRAMMAR_PHRASING'">
+        <div class="field mb-5 mt-5" v-if="chosenType === 'GRAMMAR_PHRASING'">
           <label class="label">Style</label>
           <div class="control">
             <div class="select">
@@ -37,6 +18,26 @@
                   {{ styles[key].name }}
                 </option>
               </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="column is-one-third">
+        <div class="field is-horizontal">
+          <div class="field-label is-normal">
+            <label class="label">Model</label>
+          </div>
+          <div class="field-body">
+            <div class="field is-narrow">
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select v-model="chosenModel">
+                    <option v-for="model in llmStore.models" v-bind:key="model.id" :value="model.id">
+                      {{ model.id }}
+                    </option>
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -51,6 +52,7 @@
             class="textarea"
             rows="15"
             @change="updateTokenCount"
+            tabindex="1"
           ></textarea>
         </div>
       </div>
@@ -62,6 +64,7 @@
             class="textarea"
             rows="15"
             :disabled="generationIsLoading"
+            tabindex="3"
           ></textarea>
         </div>
       </div>
@@ -84,6 +87,7 @@
         class="button is-primary is-medium"
         v-on:click="submitPrompt"
         :disabled="inputTextarea.length === 0 || generationIsLoading || !modelsLoaded"
+        tabindex="2"
       >
         Submit
       </button>

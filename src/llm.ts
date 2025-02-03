@@ -1,7 +1,5 @@
 import "dotenv/config";
 
-import promptTemplates from "./prompt-templates";
-
 import OpenAI from 'openai';
 import {Models} from "openai/resources";
 import ModelsPage = Models.ModelsPage;
@@ -9,7 +7,6 @@ import ModelsPage = Models.ModelsPage;
 let apiBaseUrl: string | undefined;
 let apiKey: string | undefined;
 let model = '';
-let promptTemplate = '';
 
 const requestType = process.env.REQUEST_TYPE?.toUpperCase() || 'OPENAI';
 
@@ -22,7 +19,6 @@ switch(requestType) {
         apiBaseUrl = process.env.CUSTOM_API_BASE_URL;
         apiKey = process.env.CUSTOM_API_KEY;
         model = process.env.CUSTOM_API_MODEL || '';
-        promptTemplate = process.env.CUSTOM_API_PROMPT_TEMPLATE?.toUpperCase() || '';
         break;
     case 'GROQ':
         apiBaseUrl = 'https://api.groq.com/openai/v1';
@@ -68,19 +64,10 @@ export async function getLlmOutput(input: string, model: string, promptType: str
             }
         ],
         model,
-        temperature: 0,
-        top_p: 0
+        temperature: 0.1
     };
 
-    const chatCompletion: OpenAI.Chat.ChatCompletion = await openai.chat.completions.create(
-        params,
-        requestType === 'CUSTOM' ? {
-            body: {
-                ...params,
-                adapter: promptTemplates[promptTemplate]
-            }
-        } : {}
-    );
+    const chatCompletion: OpenAI.Chat.ChatCompletion = await openai.chat.completions.create(params);
 
     let llmOutput = chatCompletion.choices[0].message.content || '';
 

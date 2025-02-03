@@ -22,7 +22,6 @@ Use any backend LLM service of your choice, even locally hosted ones (check "Ins
     - make sure you fill in the env variables with `CUSTOM_` prefix
     - `CUSTOM_API_BASE_URL` should usually end with `/v1`
     - `CUSTOM_API_KEY` or `CUSTOM_API_MODEL` can usually be left empty
-    - For `CUSTOM_API_PROMPT_TEMPLATE`, check available types in `src/prompt-template.ts`, so like `MISTRAL`, `LLAMA_3` etc
 
 Build frontend
 `cd frontend && yarn && yarn build`

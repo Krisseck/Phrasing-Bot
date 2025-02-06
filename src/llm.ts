@@ -96,6 +96,10 @@ export async function getLlmModels() {
                 models[index].default = true;
             }
         }
+        // Sort by id
+        models.sort((a, b) => {
+            return a.id > b.id ? 1 : -1;
+        });
     }
 
     return models;
